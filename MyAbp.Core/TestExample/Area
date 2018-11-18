@@ -1,0 +1,77 @@
+ [Comment("区域表")]
+    public class Area : FullAuditedEntity<long>
+    {
+        protected internal Area()
+        {
+            PrivateReportFieldsList = new List<ReportFields>();
+        }
+
+        public Area(string name, string description)
+        {
+            PrivateReportFieldsList = new List<ReportFields>();
+
+            Name = name;
+            Description = description;
+        }
+
+        public void AddReportFields(ReportFields field)
+        {
+            PrivateReportFieldsList.Add(field);
+        }
+
+        public void RemoveFields(ReportFields field)
+        {
+            PrivateReportFieldsList.Remove(field);
+        }
+
+        [Comment("区域项名称")]
+        [MaxLength(64)]
+        public string Name { get; protected internal set; }
+
+        [Comment("区域项描述")]
+        [MaxLength(100)]
+        public string Description { get; protected internal set; }
+
+        protected internal virtual ICollection<ReportFields> PrivateReportFieldsList { get; set; }
+
+        [Computed]
+        [Comment("区域-报告字段关系表 （区域表n:n报告字段表）")]
+        public virtual IEnumerable<ReportFields> ReportFieldsList
+        {
+            get { return PrivateReportFieldsList; }
+        }
+        
+           public class AreaConfigration : EntityTypeConfiguration<Area>
+        {
+            public AreaConfigration()
+            {
+                Configure(this);
+            }
+
+            public void Configure(EntityTypeConfiguration<Area> configuration)
+            {
+                configuration.ToTable("Areas");
+
+                configuration.Property(l => l.Name).HasMaxLength(64);
+                configuration.Property(l => l.Description).HasMaxLength(100);
+            }
+        }
+
+        public class AreaToReportFieldsMapping
+        {
+            public void AddModelBuilder(DbModelBuilder modelBuilder)
+            {
+                #region 区域和报告字段的多对多关系配置
+
+                modelBuilder.Entity<ReportFields>()
+                    .HasMany(g => g.PrivateAreaList)
+                    .WithMany(g => g.PrivateReportFieldsList);
+
+                modelBuilder.Entity<Area>()
+                    .HasMany(a => a.PrivateReportFieldsList)
+                    .WithMany(r => r.PrivateAreaList);
+
+                #endregion
+            }
+        }
+    }

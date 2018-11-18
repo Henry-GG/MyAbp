@@ -1,0 +1,76 @@
+ public  class ReportFields : FullAuditedEntity<long>
+    {
+        protected internal ReportFields()
+        {
+            PrivateAreaList = new List<Area>();
+            PrivateReportFieldGroupList = new List<ReportFieldGroup>();
+            PrivateReportTemplatesList = new List<ReportTemplate>();
+        }
+
+        public ReportFields(string name, FieldType fieldType, bool isFactoryDefault, string attributeName,
+            int? tagId)
+        {
+            PrivateAreaList = new List<Area>();
+            PrivateReportFieldGroupList = new List<ReportFieldGroup>();
+            PrivateReportTemplatesList = new List<ReportTemplate>();
+
+            Name = name;
+            FieldType = fieldType;
+            IsFactoryDefault = isFactoryDefault;
+            AttributeName = attributeName;
+            TagID = tagId;
+        }
+
+        [Comment("字段名称")]
+        [MaxLength(64)]
+        public string Name { get; protected internal set; }
+
+        [Comment("字段类型{长字段或短字段}")]
+        [DefaultValue(0)]
+        public FieldType FieldType { get; protected internal set; }
+
+        [Comment("是否出厂并支持绑定")]
+        [DefaultValue(false)]
+        public bool IsFactoryDefault { get; protected internal set; }
+
+        [Comment("用于用户自定义字段绑定出厂字段的值")]
+        [MaxLength(64)]
+        public string AttributeName { get; protected internal set; }
+
+        [Comment("与AttributeName保持一致")]
+        public int? TagID { get; protected internal set; }
+
+        protected internal ICollection<Area> PrivateAreaList { get; set; }
+
+        [Computed]
+        [Comment("区域-报告字段关系表 （区域表n:n报告字段表）")]
+        public virtual IEnumerable<Area> AreaList
+        {
+            get { return PrivateAreaList; }
+        }
+
+        protected internal virtual ICollection<ReportFieldGroup> PrivateReportFieldGroupList { get; set; }
+
+        [Computed]
+        [Comment("报告字段分组-报告字段关系表 （报告字段表 n:n 报告字段分组表）")]
+        public virtual IEnumerable<ReportFieldGroup> ReportFieldGroupList
+        {
+            get { return PrivateReportFieldGroupList; }
+        }
+
+        protected internal virtual ICollection<ReportTemplate> PrivateReportTemplatesList { get; set; }
+
+        [Computed]
+        [Comment("报告模板-报告字段关系表（报告模块n：n报告字段）")]
+        public virtual IEnumerable<ReportTemplate> ReportTemplateList
+        {
+            get { return PrivateReportTemplatesList; }
+        }
+
+        public void UpdateField(string name,FieldType fieldType,string attributeName)
+        {
+            Name = name;
+            FieldType = fieldType;
+            AttributeName = attributeName;
+        }
+    }
