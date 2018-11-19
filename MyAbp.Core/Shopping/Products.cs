@@ -24,6 +24,7 @@ namespace MyAbp.Shopping
         [ForeignKey("ProductModels")]
         public long? ProductModelsIdFK { get; set; }
 
+        //virtual 用于Lazy loading
         public virtual ProductModels ProductModels { get; set; }
 
         public List<Orders>  OrderList { get;  set; }
