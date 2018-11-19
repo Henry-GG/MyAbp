@@ -27,7 +27,8 @@ namespace MyAbp.Shopping
         //virtual 用于Lazy loading
         public virtual ProductModels ProductModels { get; set; }
 
-        public List<Orders>  OrderList { get;  set; }
+        //public List<Orders>  OrderList { get;  set; }
+        public virtual ICollection<Orders>  OrderList { get;  set; }//实现懒加载
 
         public class ProductsConfiguration : EntityTypeConfiguration<Products>
         {
